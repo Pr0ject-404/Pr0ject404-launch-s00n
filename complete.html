@@ -45,76 +45,16 @@
   <h1 class="glitch">PROJECT 404</h1>
   <p>Join the underground. Unlock the launch.</p>
 
-  <form id="signup-form">
-    <!-- Honeypot Field -->
-    <input type="text" name="honeypot" class="hp">
-
-    <!-- Real Fields -->
-    <input type="email" id="email" placeholder="your@email.com" required>
-    <button type="submit" id="submit-btn">JOIN</button>
+  <form action="https://formsubmit.co/you@404s0ciety.com" method="POST">
+    <input type="email" name="email" required>
+    <input type="hidden" name="_next" value="https://404s0ciety.com/thank-you.html">
+    <button type="submit">Join</button>
+  </form>
 
     <!-- Hidden reCAPTCHA Token -->
     <input type="hidden" id="recaptcha-token" name="recaptcha-token">
   </form>
 
-  <script>
-    // Configuration
-    const PROXY_URL = "https://your-proxy-service.workers.dev"; // Cloudflare Worker proxy
-    let lastSubmissionTime = 0;
-    const SUBMISSION_DELAY = 5000; // 5 seconds between submissions
 
-    document.getElementById("signup-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const submitBtn = document.getElementById("submit-btn");
-      submitBtn.disabled = true;
-
-      // Rate limiting (client-side)
-      const now = Date.now();
-      if (now - lastSubmissionTime < SUBMISSION_DELAY) {
-        alert("Please wait before submitting again.");
-        submitBtn.disabled = false;
-        return;
-      }
-
-      // Honeypot check
-      if (document.querySelector(".hp").value) {
-        console.log("Bot detected via honeypot");
-        return;
-      }
-
-      // Get reCAPTCHA token
-      try {
-        const token = await grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', { action: 'submit' });
-        document.getElementById("recaptcha-token").value = token;
-
-        // Prepare data
-        const formData = {
-          email: document.getElementById("email").value,
-          token: token,
-          timestamp: new Date().toISOString()
-        };
-
-        // Submit via proxy
-        const response = await fetch(PROXY_URL, {
-          method: "POST",
-          body: JSON.stringify(formData),
-          headers: { "Content-Type": "application/json" }
-        });
-
-        if (response.ok) {
-          alert("Access granted. You'll be notified.");
-          document.getElementById("signup-form").reset();
-          lastSubmissionTime = Date.now();
-        } else {
-          throw new Error("Submission failed");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Transmission failed. Try again later.");
-      } finally {
-        submitBtn.disabled = false;
-      }
-    });
-  </script>
 </body>
 </html>
